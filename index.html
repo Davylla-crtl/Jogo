@@ -1,14 +1,23 @@
 # Jogo<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jogo de Mineração</title>
+  <title>Jogo de Mineração Avançado</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #2E2B2B;
+      color: white;
+    }
     #game {
       display: grid;
       grid-template-columns: repeat(10, 50px);
       gap: 5px;
+      margin-top: 20px;
     }
     .block {
       width: 50px;
@@ -21,49 +30,111 @@
       font-weight: bold;
       cursor: pointer;
     }
+    #inventario, #status {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #333;
+      width: 80%;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
-  <h1>Jogo de Mineração</h1>
-  <p> Clique nos blocos para minerar e ver o que você encontra! </p>
+  <h1>Jogo de Mineração Avançado</h1>
+  <p>Clique nos blocos para minerar! Avance para camadas mais profundas e colete recursos raros.</p>
+  
   <div id="game"></div>
 
+  <div id="status">
+    <p><strong>Camada Atual:</strong> <span id="layer">1</span></p>
+    <p><strong>Pontuação:</strong> <span id="score">0</span></p>
+  </div>
+  
+  <div id="inventario">
+    <h2>Inventário:</h2>
+    <p>Pedra: <span id="stoneCount">0</span></p>
+    <p>Ferro: <span id="ironCount">0</span></p>
+    <p>Ouro: <span id="goldCount">0</span></p>
+    <p>Diamante: <span id="diamondCount">0</span></p>
+  </div>
+
   <script>
-    // Definir os tipos de recursos e suas probabilidades
     const recursos = [
-      { nome: "Pedra", chance: 0.5 },
-      { nome: "Ferro", chance: 0.3 },
-      { nome: "Ouro", chance: 0.15 },
-      { nome: "Diamante", chance: 0.05 }
+      { nome: "Pedra", chance: 0.6, cor: "#A9A9A9", pontos: 1 },
+      { nome: "Ferro", chance: 0.25, cor: "#B87333", pontos: 5 },
+      { nome: "Ouro", chance: 0.1, cor: "#FFD700", pontos: 10 },
+      { nome: "Diamante", chance: 0.05, cor: "#00FFFF", pontos: 20 }
     ];
 
-    // Função para gerar o conteúdo de um bloco
+    let camadaAtual = 1;
+    let pontuacao = 0;
+    let inventario = { Pedra: 0, Ferro: 0, Ouro: 0, Diamante: 0 };
+
     function gerarRecurso() {
       const rand = Math.random();
       let acumulado = 0;
       for (const recurso of recursos) {
         acumulado += recurso.chance;
         if (rand < acumulado) {
-          return recurso.nome;
+          return recurso;
         }
       }
-      return "Nada";
+      return null;
     }
 
-    // Criação dos blocos
-    const gameDiv = document.getElementById("game");
-    for (let i = 0; i < 100; i++) {
-      const bloco = document.createElement("div");
-      bloco.className = "block";
-      bloco.addEventListener("click", () => {
-        const resultado = gerarRecurso();
-        bloco.textContent = resultado;
-        bloco.style.backgroundColor = resultado === "Nada" ? "#A9A9A9" : "#FFD700";
-        bloco.style.cursor = "not-allowed";
-        bloco.onclick = null;  // Bloquear clique repetido
-      });
-      gameDiv.appendChild(bloco);
+    function atualizarInventario() {
+      document.getElementById("stoneCount").textContent = inventario.Pedra;
+      document.getElementById("ironCount").textContent = inventario.Ferro;
+      document.getElementById("goldCount").textContent = inventario.Ouro;
+      document.getElementById("diamondCount").textContent = inventario.Diamante;
+      document.getElementById("score").textContent = pontuacao;
+      document.getElementById("layer").textContent = camadaAtual;
     }
+
+    function criarBlocos() {
+      const gameDiv = document.getElementById("game");
+      gameDiv.innerHTML = '';
+      for (let i = 0; i < 100; i++) {
+        const bloco = document.createElement("div");
+        bloco.className = "block";
+        bloco.addEventListener("click", () => {
+          const recurso = gerarRecurso();
+          if (recurso) {
+            bloco.textContent = recurso.nome[0];
+            bloco.style.backgroundColor = recurso.cor;
+            bloco.style.cursor = "not-allowed";
+            bloco.onclick = null; // Impede cliques repetidos
+            pontuacao += recurso.pontos;
+            inventario[recurso.nome]++;
+          } else {
+            bloco.textContent = "-";
+            bloco.style.backgroundColor = "#333";
+          }
+          verificarAvanco();
+          atualizarInventario();
+        });
+        gameDiv.appendChild(bloco);
+      }
+    }
+
+    function verificarAvanco() {
+      const minerados = Object.values(inventario).reduce((a, b) => a + b, 0);
+      if (minerados >= camadaAtual * 10) {
+        camadaAtual++;
+        // Aumenta a raridade dos recursos em camadas mais profundas
+        recursos[0].chance -= 0.05; // Reduz chance de Pedra
+        recursos[1].chance += 0.02; // Aumenta chance de Ferro
+        recursos[2].chance += 0.02; // Aumenta chance de Ouro
+        recursos[3].chance += 0.01; // Aumenta chance de Diamante
+        criarBlocos();
+      }
+    }
+
+    // Inicializar o jogo
+    criarBlocos();
+    atualizarInventario();
   </script>
 </body>
 </html>
+
+  
