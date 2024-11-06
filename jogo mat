@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo Matemático - Aventura com Probabilidade</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #87CEEB;
+    }
+
+    #gameCanvas {
+      position: relative;
+      background-color: #fff;
+      width: 800px;
+      height: 400px;
+      overflow: hidden;
+      margin: 20px auto;
+      border: 2px solid #000;
+    }
+
+    .platform {
+      position: absolute;
+      background-color: #8B4513;
+      width: 120px;
+      height: 20px;
+    }
+
+    #player {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: #00F5FF;
+      border-radius: 50%;
+      bottom: 0;
+      transition: all 0.1s ease-in-out; /* Para movimento suave */
+    }
+
+    .math-item {
+      position: absolute;
+      background-color: #FFD700;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease; /* Efeito suave */
+    }
+
+    .collected {
+      animation: collectAnimation 0.5s forwards; /* Efeito quando coletado */
+    }
+
+    @keyframes collectAnimation {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(0) rotate(360deg); /* Animação de desaparecer */
+      }
+    }
+
+    .question-box {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+      font-size: 18px;
+    }
+
+    /* Animação de caminhada */
+    .walk {
+      animation: walkAnimation 0.5s steps(4) infinite; /* Animação de caminhada */
+    }
+
+    @keyframes walkAnimation {
+      0% { background-color: #00F5FF; }
+      25% { background-color: #87CEEB; }
+      50% { background-color: #00F5FF; }
+      75% { background-color: #87CEEB; }
+      100% { background-color: #00F5FF; }
+    }
+
+    /* Animação de pulo */
+    @keyframes jump {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-100px); }
+      100% { transform: translateY(0); }
+    }
+
+    /* Animação de desaparecer ao coletar o item */
+    @keyframes disappear {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="gameCanvas">
+    <div id="player"></div>
+    <div class="platform" style="left: 100px; bottom: 60px;"></div>
+    <div class="platform" style="left: 300px; bottom: 100px;"></div>
+    <div class="platform" style="left: 500
