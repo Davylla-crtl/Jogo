@@ -1,1 +1,54 @@
- ```html <!DOCTYPE html> <html lang="pt-br"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width= device-width, initial-scale=1.0"> <title>Aventura na Mina</title> <style> corpo { margem: 0; exibição: flex; justificar-conteúdo: centro; alinhar-itens: centro; altura: 100vh; cor de fundo: #282828; cor: #fff; família da fonte: Arial, sans-serif; } #gameCanvas { cor de fundo: #3b3b3b; borda: 2px sólido #fff; posição: relativa; } .plataforma, .gem { posição: absoluta; cor de fundo: #8B4513; } .plataforma { altura: 20px; } .gem { largura: 15px; altura: 15px; cor de fundo: #FFD700; raio da borda: 50%; } #player { posição: absoluta; largura: 20px; altura: 30px; cor de fundo: #00F5FF; raio da borda: 5px; } </style> </ head> <body> <div id="gameCanvas" style="width: 400px; height: 300px;"></div> <script> // Configurações do jogo const gameCanvas = document.getElementById("gameCanvas"); const player = document.createElement("div"); player.id = "player"; gameCanvas.appendChild(player); let playerX = 50, playerY = 240; // posição inicial let velocityY = 0; // Velocidade de queda let isJumping = false; deixe gemsCollected = 0; const gravity = 0,5; const jumpStrength = -8; // Cria plataformas e gemas const platforms = [ { x: 0, y: 280, width: 400 }, { x: 50, y: 200, width: 100 }, { x: 200, y: 150, width: 80 }, { x: 320, y: 100, largura: 60 } ]; const gemas = [ { x: 55, y: 185 }, { x: 210, y: 135 }, { x: 325, y: 85 } ]; plataformas.forEach((plat) => { const plataforma = document.createElement("div"); plataforma.className = "plataforma"; plataforma.estilo.esquerda = plat.x + "px"; plataforma.estilo.topo = plat.y + "px"; plataforma.estilo.largura = plat.largura + "px"; gameCanvas.// Movimentação do personagem let keys = { ArrowLeft: false, ArrowRight: false }; document.addEventListener("keydown", (e) => { if (e.key === "ArrowLeft") keys.ArrowLeft = true; if (e.key === "ArrowRight") keys.ArrowRight = true; if (e.key === " " && !isJumping) { velocityY = jumpStrength; isJumping = true; } }); document.addEventListener("keyup", (e) => { if (e.key === "ArrowLeft") keys.ArrowLeft = false; if (e.key === "ArrowRight") keys.ArrowRight = false; }); function gameLoop() { // Aplicando gravidade velocityY += gravity; playerY += velocityY; // Controle de movimentação if (keys.ArrowLeft) playerX -= 2; if (keys.ArrowRight) playerX += 2; // Limites de tela if (playerX < 0) playerX = 0; if (playerX + player.offsetWidth > gameCanvas.offsetWidth) playerX = gameCanvas.offsetWidth - player.offsetWidth; // Verificar colisões com plataformas platforms.forEach((plat) => { if ( playerX < plat.x + plat.width && playerX + player.offsetWidth > plat.x && playerY + player.offsetHeight > plat.y && playerY + player.offsetHeight < plat.y + 20 && velocityY > 0 ) { playerY = plat.y - player.offsetHeight; velocityY = 0; isJumping = false; } }); // Verifique detalhes com gemas gems.forEach((gem, index) => { if ( playerX < gem.x + 15 && playerX + player.offsetWidth > gem.x && playerY < gem.y + 15 && playerY + player.offsetHeight > gem.y ) { gemsCollected++; gameCanvas.removeChild(gameCanvas.getElementsByClassName("gem")[index]); index, 1); // Remove uma gema coletada console.log("Gemas coletadas:", gemsCollected); // Atualizar posição do jogador player.style.left = playerX + "px"; player.style.top = playerY + "px"; // Próximo nível if (gemsCollected === gems.length) { alert("Parabéns! Você coletou todas as gemas e completou o nível!"); gemas coletadas = 0; localização.recarregar(); // Reinicia o jogo } requestAnimationFrame(gameLoop); } // Inicia o jogo gameLoop(); </script> </body> </html> ```
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aventura Matemática: Super Mario</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #87CEEB;
+    }
+
+    #gameCanvas {
+      position: relative;
+      background-color: #fff;
+      width: 800px;
+      height: 400px;
+      overflow: hidden;
+      margin: 20px auto;
+      border: 2px solid #000;
+    }
+
+    .platform {
+      position: absolute;
+      background-color: #8B4513;
+      width: 120px;
+      height: 20px;
+    }
+
+    #player {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: #00F5FF;
+      border-radius: 50%;
+      bottom: 0;
+    }
+
+    .math-item {
+      position: absolute;
+      background-color: #FFD700;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 30px;
+      font-weight: bold;
+    }
+
+    .question-box {
+      position: absolute;
+  
