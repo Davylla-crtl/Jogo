@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mineradores: Fogo e Água</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #2E2B2B;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #game {
+      display: grid;
+      grid-template-columns: repeat(10, 50px);
+      gap: 5px;
+      margin-top: 20px;
+    }
+    .block {
+      width: 50px;
+      height: 50px;
+      background-color: #8B4513;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+    #firePlayer, #waterPlayer {
+      width: 50px;
+      height: 50px;
+      position: absolute;
+    }
+    #firePlayer {
+      background-color: #FF4500;
+    }
+    #waterPlayer {
+      background-color: #1E90FF;
+    }
+    #status {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #333;
+      width: 80%;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mineradores: Fogo e Água</h1>
+  <p>Controle os dois personagens para coletar recursos e avançar!</p>
+  <div id="status">
+    <p><strong>Nível:</strong> <span id="level">1</span></p>
+    <p><strong>Recursos Coletados:</strong> <span id="resources">0</span></p>
+  </div>
+  
+  <div id="game"></div>
+  
+  <div id="firePlayer"></div>
+  <div id="waterPlayer"></div>
+
+  <script>
+    const levelData = [
+      ["stone", "stone", "lava", "stone", "stone", "water", "stone", "stone", "lava", "stone"],
+      ["water", "stone", "lava", "gold", "stone", "stone", "diamond", "stone", "stone", "stone"],
+      ["stone", "stone", "stone", "stone", "lava", "stone", "stone", "gold", "stone", "water"],
+      // Mais camadas de nível podem ser adicionadas
+    ];
+    let currentLevel = 0;
+    let resourcesCollected = 0;
+
+    const firePlayer = document.getElementById("firePlayer");
+    const waterPlayer = document.getElementById("waterPlayer");
+    const gameDiv = document.getElementById("game");
+    const statusDiv = document.getElementById("status");
+
+    function loadLevel(level) {
+      gameDiv.innerHTML = '';
+      levelData[level].forEach((blockType, index) => {
+        const block = document.createElement("div");
+        block.className = "block";
+        block.dataset.type = blockType;
+
+        switch (blockType) {
+          case "stone":
+            block.style.backgroundColor = "#A9A9A9";
+            break;
+          case "lava":
+            block.style.backgroundColor = "#FF4500";
+            break;
+          case "water":
+            block.style.backgroundColor = "#1E90FF";
+            break;
+          case "gold":
+            block.style.backgroundColor = "#FFD700";
+            break;
+          case "diamond":
+            block.style.backgroundColor = "#00FFFF";
+            break;
+        }
+
+        gameDiv.appendChild(block);
+      });
+    }
+
+    function movePlayer(player, direction) {
+      const currentIndex = Array.from(gameDiv.children).indexOf(player.parentElement);
+      let newIndex = currentIndex;
+
+      if (direction === "ArrowLeft") newIndex -= 1;
+      if (direction === "ArrowRight") newIndex += 1;
+      if (direction === "ArrowUp") newIndex -= 10;
+      if (direction === "ArrowDown") newIndex += 10;
+
+      if (newIndex >= 0 && newIndex < gameDiv.children.length) {
+        const targetBlock = gameDiv.children[newIndex];
+        if ((player === firePlayer && targetBlock.dataset.type !== "water") ||
+            (player === waterPlayer && targetBlock.dataset.type !== "lava")) {
+          gameDiv.children[currentIndex].appendChild(player);
+          if (targetBlock.dataset.type === "gold" || targetBlock.dataset.type === "diamond") {
+            resourcesCollected += targetBlock.dataset.type === "gold" ? 10 : 20;
+            targetBlock.style.backgroundColor = "#8B4513";
+            targetBlock.dataset.type = "stone";
+            updateStatus();
+          }
+        }
+      }
+    }
+
+    function updateStatus() {
+      document.getElementById("resources").textContent = resourcesCollected;
+      document.getElementById("level").textContent = currentLevel + 1;
+    }
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key.startsWith("Arrow")) {
+        movePlayer(firePlayer, event.key);
+      } else if (["a", "w", "s", "d"].includes(event.key)) {
+        const directionMap = { a: "ArrowLeft", w: "ArrowUp", s: "ArrowDown", d: "ArrowRight" };
+        movePlayer(waterPlayer, directionMap[event.key]);
+      }
+    });
+
+    loadLevel(currentLevel);
+    updateStatus();
+  </script>
+</body>
+</html>
