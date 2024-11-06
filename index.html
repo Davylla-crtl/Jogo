@@ -1,0 +1,69 @@
+# Jogo<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo de Mineração</title>
+  <style>
+    #game {
+      display: grid;
+      grid-template-columns: repeat(10, 50px);
+      gap: 5px;
+    }
+    .block {
+      width: 50px;
+      height: 50px;
+      background-color: #8B4513;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jogo de Mineração</h1>
+  <p> Clique nos blocos para minerar e ver o que você encontra! </p>
+  <div id="game"></div>
+
+  <script>
+    // Definir os tipos de recursos e suas probabilidades
+    const recursos = [
+      { nome: "Pedra", chance: 0.5 },
+      { nome: "Ferro", chance: 0.3 },
+      { nome: "Ouro", chance: 0.15 },
+      { nome: "Diamante", chance: 0.05 }
+    ];
+
+    // Função para gerar o conteúdo de um bloco
+    function gerarRecurso() {
+      const rand = Math.random();
+      let acumulado = 0;
+      for (const recurso of recursos) {
+        acumulado += recurso.chance;
+        if (rand < acumulado) {
+          return recurso.nome;
+        }
+      }
+      return "Nada";
+    }
+
+    // Criação dos blocos
+    const gameDiv = document.getElementById("game");
+    for (let i = 0; i < 100; i++) {
+      const bloco = document.createElement("div");
+      bloco.className = "block";
+      bloco.addEventListener("click", () => {
+        const resultado = gerarRecurso();
+        bloco.textContent = resultado;
+        bloco.style.backgroundColor = resultado === "Nada" ? "#A9A9A9" : "#FFD700";
+        bloco.style.cursor = "not-allowed";
+        bloco.onclick = null;  // Bloquear clique repetido
+      });
+      gameDiv.appendChild(bloco);
+    }
+  </script>
+</body>
+</html>
